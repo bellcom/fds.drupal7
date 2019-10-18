@@ -1,4 +1,4 @@
-# Fælles Design System
+# Det Fælles Designsystem
 
 This base theme bridges the gap between Drupal and the [Fælles Design System].
 
