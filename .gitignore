@@ -43,10 +43,7 @@ node_modules
 logs
 sessions
 tmp
-share
-others
 private
-public_html/sites/all
 
 # Files that might appear on external disks
 .Spotlight-V100
