@@ -3,3 +3,5 @@ description = 'This theme should NEVER be used as a stand-alone theme.'
 core = '7.x'
 screenshot = 'screenshot.png'
 version = '7.x-1.0'
+
+stylesheets[all][] = 'dist/css/dkfds.css'

@@ -1,0 +1,53 @@
+
+.tabnav {
+  @include unstyled-list;
+  list-style-type: none;
+  padding: 0;
+  @include media-breakpoint-up(md) {
+    display: flex;
+  }
+  border-bottom: $outer-border;
+
+  li {
+    margin-bottom: 0;
+
+
+
+    a {
+      display: block;
+      color: $color-gray-001;
+      text-align: center;
+      text-decoration: none;
+      padding: map-get($spacers, 3);
+      padding-bottom: calc(#{map-get($spacers, 3) + 7px});
+      @include media-breakpoint-up(sm) {
+        margin: map-get($spacers, 3);
+        margin-right: 0;
+        margin-bottom: 0;
+      }
+      
+      
+      &:hover {
+        box-shadow: inset 0px -7px 0px 0px $tabs-active-border-color
+      }
+
+      &:focus{
+        outline: $focus-outline;
+      }
+
+      &.active {
+        color: $color-primary;
+        box-shadow: inset 0px -7px 0px 0px $tabs-active-border-color;
+        font-weight: $font-weight-semibold;
+      }
+    }
+
+    @include media-breakpoint-up(sm) {
+      &:last-child{
+        a{
+          margin-right: map-get($spacers, 3);
+        }
+      }
+    }
+  }
+}
