@@ -118,6 +118,7 @@ function fds_base_theme_menu_link(array $variables) {
 
   // Inside dropdown menu.
   else {
+    $link_class[] = 'nav-link';
 
     // Has a dropdown menu.
     if ($element['#below']) {
@@ -160,7 +161,7 @@ function fds_base_theme_menu_link(array $variables) {
     $options['html'] = TRUE;
 
     if ($element['#localized_options']['attributes']['title']) {
-      $options['attributes']['title'] = $element['#localized_options']['attributes'];
+      $options['attributes']['title'] = $element['#localized_options']['attributes']['title'];
     }
 
     if ($link_class) {
@@ -169,7 +170,8 @@ function fds_base_theme_menu_link(array $variables) {
 
     if ($element['#original_link']['depth'] > 1) {
       $link = l($element['#title'], $element['#href'], $options);
-    } else {
+    }
+    else {
       $link = l('<span>' . $element['#title'] . '</span>', $element['#href'], $options);
     }
   }
