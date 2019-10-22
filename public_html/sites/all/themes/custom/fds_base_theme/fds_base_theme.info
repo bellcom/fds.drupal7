@@ -5,6 +5,7 @@ screenshot = 'screenshot.png'
 version = '7.x-1.0'
 
 regions[content__sidebar_left] = 'Content - sidebar - left'
+regions[help] = 'Help'
 regions[content__center] = 'Content - center'
 regions[content__sidebar_right] = 'Content - sidebar - right'
 

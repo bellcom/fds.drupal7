@@ -135,6 +135,23 @@ function fds_base_theme_status_messages(array $variables) {
   return $output;
 }
 
+function fds_base_theme_preprocess_region(array &$variables) {
+  $region = $variables['region'];
+  $classes = &$variables['classes_array'];
+
+  // Content region.
+  if ($region === 'content__center') {
+    $variables['theme_hook_suggestions'][] = 'region__no_wrapper';
+  }
+  // Help region.
+  elseif ($region === 'help' && !empty($variables['content'])) {
+    $classes[] = 'alert';
+    $classes[] = 'alert-info';
+    $classes[] = 'messages';
+    $classes[] = 'info';
+  }
+}
+
 /**
  * Bootstrap theme wrapper function for the primary menu links.
  */
