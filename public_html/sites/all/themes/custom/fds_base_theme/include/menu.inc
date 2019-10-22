@@ -9,7 +9,7 @@
  *
  * @return array
  */
-function _bellcom_generate_menu($menu_name, $menu_type = NULL, $full_menu = false, $max_depth = NULL) {
+function _fds_base_theme_generate_menu($menu_name, $menu_type = NULL, $full_menu = false, $max_depth = NULL) {
   if (empty($menu_name)) {
     return array();
   }
@@ -56,7 +56,7 @@ function _bellcom_generate_menu($menu_name, $menu_type = NULL, $full_menu = fals
       'old' => 'menu_link__' . strtr($menu_name, '-', '_'),
       'new' => 'menu_link__' . strtr($menu_type, '-', '_'),
     );
-    array_walk_recursive($output, '_bellcom_alter_menu_theme_function', $menu_link_function_names);
+    array_walk_recursive($output, '_fds_base_theme_alter_menu_theme_function', $menu_link_function_names);
   }
 
   return $output;
@@ -69,7 +69,7 @@ function _bellcom_generate_menu($menu_name, $menu_type = NULL, $full_menu = fals
  * @param $key
  * @param $theme_functions
  */
-function _bellcom_alter_menu_theme_function(&$item, $key, $theme_functions) {
+function _fds_base_theme_alter_menu_theme_function(&$item, $key, $theme_functions) {
   $old_theme_function = $theme_functions['old'];
   $new_theme_function = $theme_functions['new'];
 

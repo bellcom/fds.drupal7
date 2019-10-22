@@ -4,7 +4,7 @@
  * Seperated dates
  * Heavily inspired by drupals format_date() function.
  */
-function _bellcom_seperated_dates($timestamp) {
+function _fds_base_theme_seperated_dates($timestamp) {
   $seperated_dates = array();
 
   // Use the advanced drupal_static() pattern, since this is called very often.
@@ -59,7 +59,7 @@ function _bellcom_seperated_dates($timestamp) {
 /*
  * Text shortener
  */
-function _bellcom_text_shortener($text_string, $max_length) {
+function _fds_base_theme_text_shortener($text_string, $max_length) {
   $alter = array(
     'max_length'    => $max_length,
     'ellipsis'      => TRUE,
