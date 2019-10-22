@@ -4,6 +4,16 @@ include( dirname(__FILE__) . '/include/menu.inc');
 include( dirname(__FILE__) . '/include/settings.inc');
 
 /**
+ * Implements hook_css_alter().
+ */
+
+function fds_base_theme_css_alter(&$css) {
+
+  // Remove default implementation of alerts.
+  unset($css[drupal_get_path('module','system').'/system.messages.css']);
+}
+
+/**
  * Implements theme_preprocess_html().
  */
 function fds_base_theme_preprocess_html(&$variables) {
@@ -42,6 +52,87 @@ function fds_base_theme_preprocess_page(&$variables) {
 
   // Theme settings
   $variables['theme_settings'] = _fds_base_theme_collect_theme_settings();
+}
+
+/**
+ * Returns HTML for status and/or error messages, grouped by type.
+ *
+ * An invisible heading identifies the messages for assistive technology.
+ * Sighted users see a colored box. See http://www.w3.org/TR/WCAG-TECHS/H69.html
+ * for info.
+ *
+ * @param array $variables
+ *   An associative array containing:
+ *   - display: (optional) Set to 'status' or 'error' to display only messages
+ *     of that type.
+ *
+ * @return string
+ *   The constructed HTML.
+ *
+ * @see theme_status_messages()
+ *
+ * @ingroup theme_functions
+ */
+function fds_base_theme_status_messages(array $variables) {
+  $display = $variables['display'];
+  $output = '';
+
+  $status_heading = array(
+    'status' => t('Status message'),
+    'error' => t('Error message'),
+    'warning' => t('Warning message'),
+    'info' => t('Informative message'),
+  );
+
+  // Map Drupal message types to their corresponding Bootstrap classes.
+  // @see http://twitter.github.com/bootstrap/components.html#alerts
+  $status_class = array(
+    'status' => 'success',
+    'error' => 'error',
+    'warning' => 'warning',
+    'info' => 'info',
+  );
+
+  // Retrieve messages.
+  $message_list = drupal_get_messages($display);
+
+  // Allow the disabled_messages module to filter the messages, if enabled.
+  if (module_exists('disable_messages') && variable_get('disable_messages_enable', '1')) {
+    $message_list = disable_messages_apply_filters($message_list);
+  }
+
+  foreach ($message_list as $type => $messages) {
+    $class = (isset($status_class[$type])) ? ' alert-' . $status_class[$type] : '';
+    $label = filter_xss_admin($status_heading[$type]);
+    $output .= "<div class=\"alert alert--show-icon has-close$class messages $type\" role=\"alert\" aria-label=\"$label\">\n";
+
+    $output .= "<div class=\"alert-body\">";
+
+    // Heading.
+    $output .= '<p class="alert-heading">';
+    $output .=   filter_xss_admin(reset($messages));
+    $output .= '</p>';
+
+    // Close button.
+    $output .= '<a
+                href="javascript:void(0);"
+                class="alert-close"><svg class="icon-svg" aria-hidden="true" focusable="false" tabindex="-1"><use xlink:href="#close"></use></svg>Luk</a>';
+
+    // Content.
+    if (count($messages) > 1) {
+      $output .= " <p class='alert-text'><ul>\n";
+
+      foreach ($messages as $message) {
+        $output .= '  <li>' . filter_xss_admin($message) . "</li>\n";
+      }
+
+      $output .= " </ul></p>\n";
+    }
+
+    $output .= "</div></div>\n";
+  }
+
+  return $output;
 }
 
 /**

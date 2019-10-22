@@ -8,14 +8,14 @@
 
       <!-- Begin - logo -->
       <?php if ($logo): ?>
-        <a href="javascript:void(0);" class="alert-leave" href="<?php print $front_page; ?>" title="<?php print t('Home'); ?>">
+        <a href="javascript:void(0);" class="alert-leave2" href="<?php print $front_page; ?>" title="<?php print t('Home'); ?>">
           <img src="<?php print $logo; ?>" alt="<?php print t('Home'); ?>" />
         </a>
       <?php endif; ?>
 
       <?php if (!empty($site_name)): ?>
         <a href="javascript:void(0);" href="<?php print $front_page; ?>" title="<?php print t('Home'); ?>">
-          <span class="alert-leave"><?php print $site_name; ?></span>
+          <span class="alert-leave2"><?php print $site_name; ?></span>
         </a>
       <?php endif; ?>
       <!-- End - logo -->
@@ -150,24 +150,42 @@
 </header>
 <!-- End - header -->
 
+<!-- Begin - content -->
+<!-- End - content -->
 <div class="container page-container">
   <div class="row">
 
-    <?php if (!empty($page['content__sidebar_left'])): ?>
+    <?php if (!empty($page['content__sidebar_left']) || !empty($breadcrumb)): ?>
       <!-- Begin - sidebar - left -->
       <aside class="col-12 col-lg-3 sidebar-col">
-        <?php print render($page['content__sidebar_left']); ?>
+        <?php if (!empty($breadcrumb)): print $breadcrumb; endif; ?>
+
+        <?php if (!empty($page['content__sidebar_left'])): ?>
+          <?php print render($page['content__sidebar_left']); ?>
+        <?php endif; ?>
       </aside>
       <!-- End - sidebar - left -->
     <?php endif; ?>
 
-    <?php if (!empty($page['content__center'])): ?>
-      <!-- Begin - content -->
-      <main<?php print $content_column_class; ?> id="main-content">
+    <!-- Begin - content -->
+    <main<?php print $content_column_class; ?> id="main-content">
+
+      <?php print $messages; ?>
+
+      <?php if (!empty($tabs)): ?>
+        <?php print render($tabs); ?>
+      <?php endif; ?>
+
+      <?php if (!empty($page['help'])): ?>
+        <?php print render($page['help']); ?>
+      <?php endif; ?>
+
+      <?php if (!empty($page['content__center'])): ?>
         <?php print render($page['content__center']); ?>
-      </main>
-      <!-- End - content -->
-    <?php endif; ?>
+      <?php endif; ?>
+
+    </main>
+    <!-- End - content -->
 
     <?php if (!empty($page['content__sidebar_right'])): ?>
       <!-- Begin - sidebar - right -->
