@@ -27,6 +27,12 @@
 
 <!-- Begin - load javascript files -->
 <?php print $scripts; ?>
+
+<script>
+  document.addEventListener('DOMContentLoaded', function(event) {
+    DKFDS.init();
+  });
+</script>
 <!-- End - load javascript files -->
 
 <?php print $page_bottom; ?>
