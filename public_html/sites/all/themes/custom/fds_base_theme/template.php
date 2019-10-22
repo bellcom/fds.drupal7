@@ -109,7 +109,7 @@ function fds_base_theme_status_messages(array $variables) {
     $output .= "<div class=\"alert-body\">";
 
     // Heading.
-    $output .= '<p class="alert-heading">';
+    $output .= '<p class="alert-heading pr-7">';
     $output .=   filter_xss_admin(reset($messages));
     $output .= '</p>';
 
