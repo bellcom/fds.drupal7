@@ -160,7 +160,7 @@ function fds_base_theme_menu_link(array $variables) {
     $options = array();
     $options['html'] = TRUE;
 
-    if ($element['#localized_options']['attributes']['title']) {
+    if (isset($element['#localized_options']['attributes']['title'])) {
       $options['attributes']['title'] = $element['#localized_options']['attributes']['title'];
     }
 
