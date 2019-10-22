@@ -52,6 +52,17 @@ function fds_base_theme_preprocess_page(&$variables) {
     $variables['navigation__secondary']['#theme_wrappers'] = array('menu_tree__secondary');
   }
 
+  // Add information about the number of sidebars.
+  if (!empty($variables['page']['content__sidebar_left']) && !empty($variables['page']['content__sidebar_right'])) {
+    $variables['content_column_class'] = ' class="col-12 col-lg-6"';
+  }
+  elseif (!empty($variables['page']['content__sidebar_left']) || !empty($variables['page']['content__sidebar_right'])) {
+    $variables['content_column_class'] = ' class="col-12 col-lg-9"';
+  }
+  else {
+    $variables['content_column_class'] = ' class="col-12"';
+  }
+
   // Theme settings
   $variables['theme_settings'] = _fds_base_theme_collect_theme_settings();
 }

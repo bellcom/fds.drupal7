@@ -1,5 +1,6 @@
 <!-- Begin - header -->
 <header class="header" role="banner">
+  <a class="skipnav" href="#main-content">Gå til sidens indhold</a>
 
   <!-- Begin - portal header -->
   <div class="portal-header">
@@ -148,6 +149,36 @@
 
 </header>
 <!-- End - header -->
+
+<div class="container page-container">
+  <div class="row">
+
+    <?php if (!empty($page['content__sidebar_left'])): ?>
+      <!-- Begin - sidebar - left -->
+      <aside class="col-12 col-lg-3 sidebar-col">
+        <?php print render($page['content__sidebar_left']); ?>
+      </aside>
+      <!-- End - sidebar - left -->
+    <?php endif; ?>
+
+    <?php if (!empty($page['content__center'])): ?>
+      <!-- Begin - content -->
+      <main<?php print $content_column_class; ?> id="main-content">
+        <?php print render($page['content__center']); ?>
+      </main>
+      <!-- End - content -->
+    <?php endif; ?>
+
+    <?php if (!empty($page['content__sidebar_right'])): ?>
+      <!-- Begin - sidebar - right -->
+      <aside class="col-12 col-lg-3 sidebar-col">
+        <?php print render($page['content__sidebar_right']); ?>
+      </aside>
+      <!-- End - sidebar - right -->
+    <?php endif; ?>
+
+  </div>
+</div>
 
 <?php if (!empty($page['footer__row_1']) || !empty($page['footer__column_1']) || !empty($page['footer__column_2']) || !empty($page['footer__column_3']) || !empty($page['footer__row_2'])): ?>
   <!-- Begin - footer -->
