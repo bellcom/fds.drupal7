@@ -4,4 +4,10 @@ core = '7.x'
 screenshot = 'screenshot.png'
 version = '7.x-1.0'
 
+regions[footer__row_1] = 'Footer - row - above columns'
+regions[footer__column_1] = 'Footer - column 1 (2/4)'
+regions[footer__column_2] = 'Footer - column 2 (1/4)'
+regions[footer__column_3] = 'Footer - column 3 (1/4)'
+regions[footer__row_2] = 'Footer - row - below columns'
+
 stylesheets[all][] = 'dist/css/dkfds.css'

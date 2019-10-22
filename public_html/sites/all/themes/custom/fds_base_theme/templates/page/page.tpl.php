@@ -1,3 +1,4 @@
+<!-- Begin - header -->
 <header class="header" role="banner">
 
   <!-- Begin - portal header -->
@@ -146,3 +147,68 @@
   <!-- End - navigation -->
 
 </header>
+<!-- End - header -->
+
+<?php if (!empty($page['footer__row_1']) || !empty($page['footer__column_1']) || !empty($page['footer__column_2']) || !empty($page['footer__column_3']) || !empty($page['footer__row_2'])): ?>
+  <!-- Begin - footer -->
+  <footer>
+    <div class="footer">
+      <div class="container">
+
+        <?php if (!empty($page['footer__row_1'])): ?>
+          <!-- Begin - row 1 -->
+            <div class="row">
+              <div class="col-12">
+                <?php print render($page['footer__row_1']); ?>
+              </div>
+            </div>
+          <!-- End - row 1 -->
+        <?php endif; ?>
+
+        <?php if (!empty($page['footer__column_1']) || !empty($page['footer__column_2']) || !empty($page['footer__column_3'])): ?>
+          <!-- Begin - columns -->
+          <div class="row">
+
+            <?php if (!empty($page['footer__column_1'])): ?>
+              <!-- Begin - column 1 -->
+              <div class="col-12 col-md-6">
+                <?php print render($page['footer__column_1']); ?>
+              </div>
+              <!-- End - column 1 -->
+            <?php endif; ?>
+
+            <?php if (!empty($page['footer__column_2'])): ?>
+              <!-- Begin - column 2 -->
+              <div class="col-12 col-md-3">
+                <?php print render($page['footer__column_2']); ?>
+              </div>
+              <!-- End - column 2 -->
+            <?php endif; ?>
+
+            <?php if (!empty($page['footer__column_3'])): ?>
+              <!-- Begin - column 3 -->
+              <div class="col-12 col-md-3">
+                <?php print render($page['footer__column_3']); ?>
+              </div>
+              <!-- End - column 3 -->
+            <?php endif; ?>
+
+          </div>
+          <!-- End - columns -->
+        <?php endif; ?>
+
+        <?php if (!empty($page['footer__row_2'])): ?>
+          <!-- Begin - row 2 -->
+          <div class="row">
+            <div class="col-12">
+              <?php print render($page['footer__row_2']); ?>
+            </div>
+          </div>
+          <!-- End - row 2 -->
+        <?php endif; ?>
+
+      </div>
+    </div>
+  </footer>
+  <!-- End - footer -->
+<?php endif; ?>
