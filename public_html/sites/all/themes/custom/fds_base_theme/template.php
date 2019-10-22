@@ -22,35 +22,12 @@ function fds_base_theme_preprocess_html(&$variables) {
  * Implements theme_preprocess_page().
  */
 function fds_base_theme_preprocess_page(&$variables) {
-  $i18n = module_exists('i18n_menu');
   $primary_navigation_name = variable_get('menu_main_links_source', 'main-menu');
   $secondary_navigation_name = variable_get('menu_secondary_links_source', 'user-menu');
 
-  // Navigation - primary.
-  $variables['navigation__primary'] = FALSE;
-  if ($variables['main_menu']) {
-    $tree = menu_tree_page_data(variable_get('menu_main_links_source', $primary_navigation_name));
-
-    if ($i18n) {
-      $tree = i18n_menu_localize_tree($tree);
-    }
-
-    $variables['navigation__primary'] = menu_tree_output($tree);
-    $variables['navigation__primary']['#theme_wrappers'] = array('menu_tree__primary');
-  }
-
-  // Navigation - secondary.
-  $variables['navigation__secondary'] = FALSE;
-  if ($variables['main_menu']) {
-    $tree = menu_tree_page_data(variable_get('menu_main_links_source', $secondary_navigation_name));
-
-    if ($i18n) {
-      $tree = i18n_menu_localize_tree($tree);
-    }
-
-    $variables['navigation__secondary'] = menu_tree_output($tree);
-    $variables['navigation__secondary']['#theme_wrappers'] = array('menu_tree__secondary');
-  }
+  // Navigation.
+  $variables['navigation__primary'] = _fds_base_theme_generate_menu($primary_navigation_name, 'header_primary', 2);
+  $variables['navigation__secondary'] = _fds_base_theme_generate_menu($secondary_navigation_name, 'header_secondary', 3);
 
   // Add information about the number of sidebars.
   if (!empty($variables['page']['content__sidebar_left']) && !empty($variables['page']['content__sidebar_right'])) {
@@ -69,33 +46,15 @@ function fds_base_theme_preprocess_page(&$variables) {
 
 /**
  * Bootstrap theme wrapper function for the primary menu links.
- *
- * @param array $variables
- *   An associative array containing:
- *   - tree: An HTML string containing the tree's items.
- *
- * @return string
- *   The constructed HTML.
  */
-function fds_base_theme_menu_tree__primary(array &$variables) {
+function fds_base_theme_menu_tree__header_primary(array &$variables) {
   return '<ul class="nav-primary">' . $variables['tree'] . '</ul>';
 }
 
 /**
  * Returns HTML for a menu link and submenu.
- *
- * @param array $variables
- *   An associative array containing:
- *   - element: Structured array data for a menu link.
- *
- * @return string
- *   The constructed HTML.
- *
- * @see theme_menu_link()
- *
- * @ingroup theme_functions
  */
-function fds_base_theme_menu_link(array $variables) {
+function fds_base_theme_menu_link__header_primary(array $variables) {
   $element = $variables['element'];
   $sub_menu = '';
   $link = '';
@@ -140,10 +99,18 @@ function fds_base_theme_menu_link(array $variables) {
       elseif ((!empty($element['#original_link']['depth']))) {
         $generate_link = FALSE;
 
+        // If this item is active and/or in the active trail, add necessary classes.
+        $wantedClasses = array(
+          'active' => '',
+          'trail' => 'current',
+        );
+        $button_active_classes = _fds_base_theme_in_active_trail($element['#href'], $wantedClasses);
+        $button_class = implode(' ', $button_active_classes);
+
         // Add our own wrapper.
         unset($element['#below']['#theme_wrappers']);
         $sub_menu = '<div class="overflow-menu">';
-        $sub_menu .=   '<button class="current button-overflow-menu js-dropdown js-dropdown--responsive-collapse" data-js-target="#headeroverflow_' . $element['#original_link']['mlid'] . '" aria-haspopup="true" aria-expanded="false">';
+        $sub_menu .=   '<button class="' . $button_class . ' button-overflow-menu js-dropdown js-dropdown--responsive-collapse" data-js-target="#headeroverflow_' . $element['#original_link']['mlid'] . '" aria-haspopup="true" aria-expanded="false">';
         $sub_menu .=     '<span>' . $element['#title'] . '</span>';
         $sub_menu .=   '</button>';
         $sub_menu .=   '<div class="overflow-menu-inner" id="headeroverflow_' . $element['#original_link']['mlid'] . '" aria-hidden="true">';
@@ -158,7 +125,11 @@ function fds_base_theme_menu_link(array $variables) {
   }
 
   // If this item is active and/or in the active trail, add necessary classes.
-  $active_classes = _fds_in_active_trail($element['#href']);
+  $wantedClasses = array(
+    'active' => 'current',
+    'trail' => 'current',
+  );
+  $active_classes = _fds_base_theme_in_active_trail($element['#href'], $wantedClasses);
 
   if (!empty($link_class)) {
     $link_class = array_merge($link_class, $active_classes);
@@ -170,6 +141,7 @@ function fds_base_theme_menu_link(array $variables) {
   if ($generate_link) {
     $options = array();
     $options['html'] = TRUE;
+    $options['attributes']['class'] = array();
 
     if (isset($element['#localized_options']['attributes']['title'])) {
       $options['attributes']['title'] = $element['#localized_options']['attributes']['title'];
@@ -202,4 +174,64 @@ function fds_base_theme_menu_link(array $variables) {
  */
 function fds_base_theme_menu_tree__secondary(array &$variables) {
   return '<ul class="menu nav navbar-nav secondary">' . $variables['tree'] . '</ul>';
+}
+
+/**
+ * Bootstrap theme wrapper function for the primary menu links.
+ *
+ * @param array $variables
+ *   An associative array containing:
+ *   - tree: An HTML string containing the tree's items.
+ *
+ * @return string
+ *   The constructed HTML.
+ */
+function fds_base_theme_menu_tree(array &$variables) {
+  return '<nav><ul class="sidenav-list">' . $variables['tree'] . '</ul></nav>';
+}
+
+/*
+ * Implements theme_menu_link().
+ */
+function fds_base_theme_menu_link(array $variables) {
+  $element = $variables['element'];
+  $sub_menu = '';
+
+  if ($element['#below']) {
+
+    // Prevent dropdown functions from being added to management menu so it
+    // does not affect the navbar module.
+    if (($element['#original_link']['menu_name'] == 'management') && (module_exists('navbar'))) {
+      $sub_menu = drupal_render($element['#below']);
+    }
+
+    elseif ((!empty($element['#original_link']['depth']))) {
+
+      // Add our own wrapper.
+      unset($element['#below']['#theme_wrappers']);
+
+      // Submenu classes
+      $sub_menu = ' <ul class="sidenav-sub_list">' . drupal_render($element['#below']) . '</ul>';
+    }
+  }
+
+  // If this item is active and/or in the active trail, add necessary classes.
+  $wantedClasses = array(
+    'active' => 'active',
+    'trail' => 'current',
+  );
+  $link_item['class'] = _fds_base_theme_in_active_trail($element['#href'], $wantedClasses);
+
+  $link_text = $element['#title'];
+  if (isset($element['#localized_options']['attributes']['title'])) {
+    $link_text = $element['#title'] . '<span class="sidenav-information">' . $element['#localized_options']['attributes']['title'] . '</span> ';
+  }
+
+  $options = array();
+  $options['html'] = true;
+  $options['attributes']['class'] = array();
+
+  $output = l($link_text, $element['#href'], $options);
+
+  return '<li' . drupal_attributes($link_item) . '>' . $output . $sub_menu . "</li>\n";
 }

@@ -2,62 +2,33 @@
 
 /**
  * @param $menu_name
- * @param bool|FALSE $menu_type
- * @param bool|FALSE $full_menu
+ * @param bool|FALSE $theme_wrapper
  * @param null $max_depth
- * Menu type: "navigation-list" or "sidebar"
  *
  * @return array
  */
-function _fds_base_theme_generate_menu($menu_name, $menu_type = NULL, $full_menu = false, $max_depth = NULL) {
+function _fds_base_theme_generate_menu($menu_name, $theme_wrapper = NULL, $max_depth = NULL) {
   if (empty($menu_name)) {
     return array();
   }
+  $i18n = module_exists('i18n_menu');
+  $tree = menu_tree_page_data($menu_name, $max_depth);
 
-  // Menu type
-  if ($full_menu) {
-    $menu_tree = menu_tree_all_data($menu_name, NULL, $max_depth);
-  }
-  else {
-    $menu_tree = menu_tree_page_data($menu_name, $max_depth);
+  if ($i18n) {
+    $tree = i18n_menu_localize_tree($tree);
   }
 
-  $output = menu_tree_output($menu_tree);
+  $output = menu_tree_output($tree);
+  $output['#theme_wrappers'] = array(
+    'menu_tree__' . strtr($theme_wrapper, '-', '_'),
+  );
 
-  //  // Start level
-  //  if ($start_level !== NULL) {
-  //
-  //    while ($start_level-- > 0 && $menu_tree) {
-  //
-  //      // Loop through the current level's items until we find one that is in trail.
-  //      while ($item = array_shift($menu_tree)) {
-  //        if ($item['link']['in_active_trail']) {
-  //
-  //          // If the item is in the active trail, we continue in the subtree.
-  //          $menu_tree = empty($item['below']) ? array() : $item['below'];
-  //          break;
-  //        }
-  //      }
-  //    }
-  //  }
-
-  // Change theme function for tree and links
-  if ($menu_type !== NULL) {
-
-    // Tree
-    $menu_tree_function_names = array(
-      'menu_tree__' . strtr($menu_type, '-', '_'),
-      'menu_tree__' . strtr($menu_name, '-', '_') . '__' . strtr($menu_type, '-', '_'),
-    );
-    $output['#theme_wrappers'] = $menu_tree_function_names;
-
-    // Links
-    $menu_link_function_names = array(
-      'old' => 'menu_link__' . strtr($menu_name, '-', '_'),
-      'new' => 'menu_link__' . strtr($menu_type, '-', '_'),
-    );
-    array_walk_recursive($output, '_fds_base_theme_alter_menu_theme_function', $menu_link_function_names);
-  }
+  // Links
+  $menu_link_function_names = array(
+    'old' => 'menu_link__' . strtr($menu_name, '-', '_'),
+    'new' => 'menu_link__' . strtr($theme_wrapper, '-', '_'),
+  );
+  array_walk_recursive($output, '_fds_base_theme_alter_menu_theme_function', $menu_link_function_names);
 
   return $output;
 }
@@ -90,40 +61,46 @@ function _fds_base_theme_alter_menu_theme_function(&$item, $key, $theme_function
  * @return
  *   An array of classes if active or in the active trail.
  *   An empty array if not active or in the active trail.
- *
- * @todo
- *   Look at migrating to a menu system level function.
  */
-function _fds_in_active_trail($link_path) {
+function _fds_base_theme_in_active_trail($link_path, $wantedClasses = array()) {
   $classes = array();
   $active_paths = array();
+
+  $active_class = (!empty($wantedClasses['active'])) ? $wantedClasses['active'] : 'active';
+  $trail_class = (!empty($wantedClasses['trail'])) ? $wantedClasses['trail'] : 'active-trail';
+
   // Don't waste cycles: if we're on the front page, we're either active or not
   // and we don't need to look at the rest of the tree.
   if (drupal_is_front_page()) {
     if ($link_path == '<front>') {
-      $classes[] = 'current';
+      $classes[] = $active_class;
     }
+
     return $classes;
   }
+
   // If the current page matches the item path, it's active and we don't need to
   // look further. Comment out the return statement to have both 'active' and
   // 'active-trail' classes applied to the item for the current page.
   if ($link_path == current_path()) {
-    $classes[] = 'current';
+    $classes[] = $active_class;
+
     return $classes;
   }
   // If we're not on the front page and the current link is not the current page,
   // The we need to check the whole active trail. Since Drupal caches the result
   // of menu_get_active_trail(), this is not too costly.
   $active_trail = menu_get_active_trail();
-  $front = array_shift($active_trail);
+
   foreach ($active_trail as $item) {
     if(!empty($item['link_path'])) {
       $active_paths[$item['link_path']] = TRUE;
     }
   }
+
   if (!empty($active_paths[$link_path])) {
-    $classes[] = 'current-trail';
+    $classes[] = $trail_class;
   }
+
   return $classes;
 }
