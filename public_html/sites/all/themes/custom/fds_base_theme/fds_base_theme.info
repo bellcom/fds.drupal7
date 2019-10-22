@@ -4,6 +4,10 @@ core = '7.x'
 screenshot = 'screenshot.png'
 version = '7.x-1.0'
 
+regions[content__sidebar_left] = 'Content - sidebar - left'
+regions[content__center] = 'Content - center'
+regions[content__sidebar_right] = 'Content - sidebar - right'
+
 regions[footer__row_1] = 'Footer - row - above columns'
 regions[footer__column_1] = 'Footer - column 1 (2/4)'
 regions[footer__column_2] = 'Footer - column 2 (1/4)'
