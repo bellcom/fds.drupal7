@@ -1,0 +1,3 @@
+[submodule "fds_base_theme"]
+	path = fds_base_theme
+	url = git@github.com:bellcom/fds_base_theme.git
